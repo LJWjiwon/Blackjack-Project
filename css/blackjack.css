@@ -1,0 +1,145 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    width: 100%;
+    height: 100%;
+}
+
+.container {
+    width: 100%;
+    height: 100%;
+    background: green;
+    overflow: auto;  
+}
+
+.left-div {
+    width: 25%;
+    height: 100%;
+    float: left;
+}
+
+.center-div {
+    width: 50%;
+    height: 100%;
+    float: left;
+}
+
+.right-div {
+    width: 25%;
+    height: 100%;
+    float: left;
+}
+
+.deler-board {
+    width: 700px;
+    height: 230px;
+    margin-top: 30px;
+    border: 3px solid white;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.player-board {
+    width: 700px;
+    height: 230px;
+    margin-top: 60px;
+    border: 3px solid white;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.chip-board {
+    width: 520px;
+    height: 110px;
+    background: rgb(130, 63, 32);
+    bottom: 0;
+    position: absolute;
+    left: 50%; /* 부모 요소의 50% 위치에서 시작 */
+    transform: translateX(-50%); /* 요소의 너비의 절반만큼 왼쪽으로 이동 */
+    border-radius: 10px;
+}
+
+.cardDeck-img_box {
+    width: 300px;
+    height: 300px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 140px;
+}
+
+.cardDeck-img {
+    width: 100%;
+    height: 100%;
+}
+
+.button-box {
+    width: 200px;
+    height: 200px;
+    float: left;
+}
+
+.hit-button {
+    width: 150px;
+    height: 50px;
+}
+
+.stay-button {
+    width: 150px;
+    height: 50px;
+    margin-top: 15px;
+}
+
+.hit-button:hover {
+    cursor: pointer;    /* 마우스 커서 바뀜 */
+}
+
+.stay-button:hover {
+    cursor: pointer;
+}
+
+.left-div > h4 {
+    margin-top: 100px;
+    text-align: right;
+    margin-block-end: 10px;
+    color: red;
+    text-shadow: 
+    -1px -1px 1px black,
+     1px -1px 1px black,
+    -1px  1px 1px black,
+     1px  1px 1px black; /* 테두리 효과 */
+}
+
+.beting-board {
+    width: 350px;
+    height: 300px;
+    margin-top: 100px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 0;
+    background: rgb(0, 0, 139);
+    border: 3px solid black;
+}
+
+.beting-button {
+    cursor: pointer;
+    width: 150px;
+    height: 40px;
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 20px;
+    font-weight: 700;
+    color: red;
+    background-color: black;
+
+}
+
+.center-div > h4 {
+    margin-block-start: 12px;
+    margin-left: 130px;
+}
+
