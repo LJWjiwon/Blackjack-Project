@@ -16,11 +16,28 @@ function RandomChip() {
     }
 
     // 각 div를 선택
-    const divs = document.querySelectorAll(".chip-box");
+    const divs = document.querySelectorAll(".chip-count");
 
     for (let i = 0; i < divs.length && i < nChips.length; i++) {    //div에 개수
         if (nChips[i] != 0) {
-            divs[i].innerHTML = `${nChips[i]}개`;
+            const img = document.getElementById("chip" + i);
+
+            divs[i].textContent = `${nChips[i]}개`;
+
+            if (img.onclick == null) {  //칩 onclick 다시 활성화
+                img.onclick = img_click();
+                img.style.opacity = "1";
+            }
+            img.style.cursor = "pointer";   //커서 손가락 모양으로
+        }
+        else {  //0개면 칩 onclick 비활성화
+            const img = document.getElementById("chip" + i);
+
+            img.onclick = null;
+            img.style.opacity = "0.5";
+            img.style.cursor = "default";
+
+            divs[i].textContent = ``;
         }
     }
 }
@@ -128,7 +145,6 @@ function player_card_show() {
         // 카드 이미지를 배경으로 설정
         div.style.backgroundImage = "url('/image/PNG-cards/" + player_card[i] + ".png')"; // 플레이어 카드 이미지를 설정   //card배열값.png
         div.style.backgroundSize = "120px 180px"; // 카드 이미지 크기 설정
-        div.style.backgroundColor = "red";
         cell.appendChild(div); // 플레이어 보드에 카드 추가
     }
 }
@@ -308,3 +324,7 @@ function sum_deler(ace){
 }
 
 
+/* --------- 이미지 onclick 함수 ------------- */
+function img_click() {
+    alert('칩 클릭');
+}
