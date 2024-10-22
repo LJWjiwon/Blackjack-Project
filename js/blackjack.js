@@ -1,3 +1,28 @@
+/*----------- 돈을 칩으로 계산 ----------------*/
+var RandomDollar = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;     //1000 ~ 10000 랜덤값 추출
+
+document.getElementById("total_dollar").innerHTML += RandomDollar;  //html 기존 텍스트 뒤에 추가(총 금액)
+
+var CHIP = [1000, 500, 100, 25, 5, 1]
+var nChips = new Array()    //칩 개수 저장
+
+for (let i = 0; i < CHIP.length; i++) {
+    let num = Math.floor(RandomDollar / CHIP[i])    //칩 개수 계산
+    nChips.push(num)
+
+    RandomDollar %= CHIP[i]     //거스름돈 계산
+}
+
+// 각 div를 선택
+const divs = document.querySelectorAll(".chip-box");
+
+for (let i = 0; i < divs.length && i < nChips.length; i++) {    //div에 개수
+    if (nChips[i] != 0) {
+        divs[i].innerHTML = `${nChips[i]}개`;
+    }
+}
+
+
 
 /* -------------- 카드덱 섞기 -----------------*/ 
 
