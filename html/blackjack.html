@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>BlackJack</title>
     <link href="/css/blackjack.css" rel="stylesheet">
+    
 </head>
 <body>
     <div class="container">
@@ -34,7 +35,8 @@
                 <div class="chip-box"></div>
                 <div class="chip-box" id="rigth-chipBox"></div>
             </div>
-            <b id="total_dollar">총 금액 : $</b>
+            <b>총 금액 : $</b>
+            <b id="total_dollar"></b>
         </div>
         <div class="right-div">
             <button class="start" onclick="new_start()">시작</button>
@@ -42,6 +44,7 @@
             <div class="cardDeck-img_box">
                 <img src="/image/poker-deck.png" class="cardDeck-img">
             </div>
+            player : <input type="text" name="" value="" id="player-card_sum">
             <div class="button-box">
                 <button class="hit-button" onclick="">hit</button>
                 <button class="stay-button" onclick="">stay</button>

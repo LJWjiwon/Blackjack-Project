@@ -1,24 +1,27 @@
 /*----------- 돈을 칩으로 계산 ----------------*/
-var RandomDollar = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;     //1000 ~ 10000 랜덤값 추출
 
-document.getElementById("total_dollar").innerHTML += RandomDollar;  //html 기존 텍스트 뒤에 추가(총 금액)
+function RandomChip() {
+    var RandomDollar = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;     //1000 ~ 10000 랜덤값 추출
 
-var CHIP = [1000, 500, 100, 25, 5, 1]
-var nChips = new Array()    //칩 개수 저장
+    document.getElementById("total_dollar").innerHTML = RandomDollar;  //html 기존 텍스트 뒤에 추가(총 금액)
 
-for (let i = 0; i < CHIP.length; i++) {
-    let num = Math.floor(RandomDollar / CHIP[i])    //칩 개수 계산
-    nChips.push(num)
+    var CHIP = [1000, 500, 100, 25, 5, 1]
+    var nChips = new Array()    //칩 개수 저장
 
-    RandomDollar %= CHIP[i]     //거스름돈 계산
-}
+    for (let i = 0; i < CHIP.length; i++) {
+        let num = Math.floor(RandomDollar / CHIP[i])    //칩 개수 계산
+        nChips.push(num)
 
-// 각 div를 선택
-const divs = document.querySelectorAll(".chip-box");
+        RandomDollar %= CHIP[i]     //거스름돈 계산
+    }
 
-for (let i = 0; i < divs.length && i < nChips.length; i++) {    //div에 개수
-    if (nChips[i] != 0) {
-        divs[i].innerHTML = `${nChips[i]}개`;
+    // 각 div를 선택
+    const divs = document.querySelectorAll(".chip-box");
+
+    for (let i = 0; i < divs.length && i < nChips.length; i++) {    //div에 개수
+        if (nChips[i] != 0) {
+            divs[i].innerHTML = `${nChips[i]}개`;
+        }
     }
 }
 
@@ -108,7 +111,7 @@ function deler_draw() {
 
 //플레이어 카드 보여주는 함수
 function player_card_show() {   
-    var cell = document.getElementsByClassName("player-board"); // 플레이어 카드가 표시될 HTML 요소 가져오기
+    var cell = document.querySelector(".player-board"); // 플레이어 카드가 표시될 HTML 요소 가져오기
 
     //기존의 카드 요소 제거(중복 카드 표시 방지)
     while (cell.hasChildNodes()) { // 요소가 자식 노드를 가질 때까지 반복
@@ -117,6 +120,7 @@ function player_card_show() {
 
     // player_card 배열의 모든 카드를 차례대로 출력
     for (var i = 0; i < player_card.length; i++) { 
+        console.log(player_card[i]);
         var div = document.createElement("div"); // 새로운 div 요소 생성
 
         div.id = "player" + i; // 각 카드에 고유한 ID 부여
@@ -124,13 +128,14 @@ function player_card_show() {
         // 카드 이미지를 배경으로 설정
         div.style.backgroundImage = "url('/image/PNG-cards/" + player_card[i] + ".png')"; // 플레이어 카드 이미지를 설정   //card배열값.png
         div.style.backgroundSize = "120px 180px"; // 카드 이미지 크기 설정
+        div.style.backgroundColor = "red";
         cell.appendChild(div); // 플레이어 보드에 카드 추가
     }
 }
 
 // 딜러 카드 보여주기 함수
 function deler_card_show(num) {
-    var cell = document.getElementsByClassName("deler-board"); 
+    var cell = document.querySelector(".deler-board");
 
     while (cell.hasChildNodes()) { //기존 요소 제거
         cell.removeChild(cell.firstChild); 
@@ -157,8 +162,8 @@ function deler_card_show(num) {
 
 //다시시작
 function new_start(){ 
+    RandomChip();
     suple();
-    console.log(card);
     setTimeout(turn_start, 1000);
 }
 
@@ -179,12 +184,6 @@ function turn_start() { //카드 각각 2장씩 뽑기
     player_card_show(); // 플레이어의 카드를 화면에 표시
     deler_card_show(1);   // 딜러의 카드를 화면에 표시 (첫 번째 카드는 뒷면으로)
 }
-
-//보유 카드 이미지 보여줌
-function view() {
-    viewer.innerHTML = card.slice(count, card.length); // 현재 카드 배열에서 count 인덱스부터 끝까지의 카드 표시
-}
-
 
 /* -------------- 버스트 ------------------- */
 
@@ -216,5 +215,96 @@ function D_burst() {
     setTimeout(end, 300); // 300ms 후 게임 종료 함수 호출
 }
 
+
+
+/* ------------ 합계 계산 ------------ */
+
+//플레이어 카드 합 계산
+function sum_player(ace){ 
+    var Player_sum = 0;
+
+    if(ace == 0){
+        for (var i = 0; i < player_card.length; i++) {
+            if(player_card[i][1] == '0' || player_card[i][0] == 'j'|| player_card[i][0] == 'q' || player_card[i][0] == 'k'){
+                Player_sum += 10;
+            }
+            else if (player_card[i][0]=='a') {    //A는 11로 계산 한 다음 합이 21이 넘으면 1로 계산
+                Player_sum += 11;
+            }
+            else{
+                Player_sum += parseInt(player_card[i][0]);
+            }
+        }
+
+        var player_card_sum = document.getElementById('player-card_sum');
+        player_card_sum.value = Player_sum;    //합계 화면에 보여짐
+
+        if (Player_sum > 21){
+            return sum_player(1);   //합 21 넘어서 A 1로 
+        }
+    }
+
+    if(ace == 1) {
+        for (var i = 0; i < player_card.length; i++) {
+            if(player_card[i][1]=='0'||player_card[i][0]=='j'||player_card[i][0]=='q'||player_card[i][0]=='k'){
+                Player_sum += 10;
+            }
+            else if (player_card[i][0] == 'a') {    //A를 1로 
+                Player_sum += 1;
+            }
+            else{
+                Player_sum += parseInt(player_card[i][0]);
+            }
+        }
+
+        var player_card_sum = document.getElementById('player-card_sum');
+        player_card_sum.value = Player_sum;
+
+        if(Player_sum > 21) {
+            setTimeout(P_bust, 100);
+        }
+    }
+
+    return Player_sum;
+}
+
+//딜러 합 계산
+function sum_deler(ace){    
+    var Deler_sum = 0;
+
+    if(ace == 0) {
+        for (var i = 0; i < deler_card.length; i++) {
+            if(deler_card[i][1]=='0'|| deler_card[i][0]=='j'|| deler_card[i][0]=='q'|| deler_card[i][0]=='k'){
+                Deler_sum += 10;
+            }
+            else if (deler_card[i][0]=='a') {   //A는 11로 계산 한 다음 합이 21이 넘으면 1로 계산
+                Deler_sum += 11;
+            }
+            else{
+                Deler_sum += parseInt(deler_card[i][0]);
+            }
+        }
+
+        if (Deler_sum > 21) {
+            return sum_deler(1);
+        }
+    }
+
+    if (ace == 1) {
+        for (var i = 0; i < deler_card.length; i++) {
+            if(deler_card[i][1]=='0'||deler_card[i][0]=='j'||deler_card[i][0]=='q'||deler_card[i][0]=='k'){
+                Deler_sum += 10;
+            }
+            else if (deler_card[i][0] == 'a') {
+                Deler_sum += 1;
+            }
+            else {
+                Deler_sum += parseInt(deler_card[i][0]);
+            }
+        }
+    }
+
+    return Deler_sum;
+}
 
 

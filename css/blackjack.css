@@ -171,6 +171,11 @@ html, body {
     margin-left: 80px;
     font-size: 17px;
     display: block;
+    float: left;
+}
+
+#total_dollar {
+    margin-left: 0;
 }
 
 .right-div > p {
@@ -180,5 +185,25 @@ html, body {
     font-weight: 600;
     top: 80px;
     left: 1250px;
+}
+
+.player-board div{
+    margin-top: 30px;
+    margin-right:-70px;
+    margin-left: 20px;
+    width: 120px;
+    height: 180px;
+    float: left;
+    font-size: 30pt;
+}
+
+.deler-board div{
+    margin-top: 30px;
+    margin-right:-70px;
+    margin-left: 20px;
+    width: 120px;
+    height: 180px;
+    float: left;
+    font-size: 30pt;
 }
 
