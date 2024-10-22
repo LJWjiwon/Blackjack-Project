@@ -26,9 +26,22 @@ for (let i = 0; i < divs.length && i < nChips.length; i++) {    //div에 개수
 
 /* -------------- 카드덱 섞기 -----------------*/ 
 
-var dec = ["1a","1b","1c","1d","2a","2b","2c","2d","3a","3b","3c","3d","4a","4b","4c","4d","5a","5b","5c","5d",
-    "6a","6b","6c","6d","7a","7b","7c","7d","8a","8b","8c","8d","9a","9b","9c","9d","0a","0b","0c","0d",
-    "ja","jb","jc","jd","qa","qb","qc","qd","ka","kb","kc","kd"];   //덱 1개 
+var dec = [];   //덱 저장(1개)
+var cardName = ["ace", "jack", "king", "queen"];
+
+for (var i = 2; i < 11; i++) {
+    dec.push(i + "_clubs");
+    dec.push(i + "_diamonds");
+    dec.push(i + "_hearts");
+    dec.push(i + "_spades");
+}
+
+for(var i = 0; i < 4; i++) {
+    dec.push(cardName[i] + "_clubs");
+    dec.push(cardName[i] + "_diamonds");
+    dec.push(cardName[i] + "_hearts");
+    dec.push(cardName[i] + "_spades");
+}
 
 // 4개의 카드 덱을 사용
 var fullDeck = dec.concat(dec, dec, dec);  // 카드덱 합침
@@ -64,5 +77,79 @@ function suple(){ //카드 섞기
 
     for (var i = 0; i < fullDeck.length ; i++) {
         card.push(fullDeck[rst.pop()]);  //fullDeck[rst에서 꺼낸 랜덤값] 카드를 card 배열에 집어넣음
+    }
+}
+
+
+/* ------- 카드 뽑기 ---------- */
+
+var player_card = [];   //플레이어 보유 카드 목록
+var deler_card = [];    //딜러 보유 카드 목록
+
+var count = 0;  //뽑을 카드 인덱스
+
+//플레이어 카드 1장 뽑기 함수
+function player_draw() {    
+    player_card.push(card[count++]);    //플레이어 카드 뽑고 인덱스 증가
+    sum_player(0);  //플레이어 점수 계산 함수 호출
+}
+
+//딜러 카드 1장 뽑기 함수
+function deler_draw() {
+    var deler_score = parseInt(sum_deler(0));   //딜러 점수
+
+    if(deler_score < 17) {  //16이하일 경우 hit
+        deler_card.push(card[count++]);
+        sum_deler(0);   //딜러 점수 계산
+    }
+}
+
+//플레이어 카드 보여주는 함수
+function player_card_show() {   
+    var cell = document.getElementsByClassName("player-board"); // 플레이어 카드가 표시될 HTML 요소 가져오기
+
+    //기존의 카드 요소 제거(중복 카드 표시 방지)
+    while (cell.hasChildNodes()) { // 요소가 자식 노드를 가질 때까지 반복
+        cell.removeChild(cell.firstChild); // 기존 카드 요소를 모두 제거
+    }
+
+    // player_card 배열의 모든 카드를 차례대로 출력
+    for (var i = 0; i < player_card.length; i++) { 
+        var div = document.createElement("div"); // 새로운 div 요소 생성
+
+        div.id = "player" + i; // 각 카드에 고유한 ID 부여
+
+        // 카드 이미지를 배경으로 설정
+        div.style.backgroundImage = "url('/image/PNG-cards/" + player_card[i] + ".png')"; // 플레이어 카드 이미지를 설정   //card배열값.png
+        div.style.backgroundSize = "120px 180px"; // 카드 이미지 크기 설정
+        cell.appendChild(div); // 플레이어 보드에 카드 추가
+    }
+}
+
+// 딜러 카드 보여주기 함수
+function deler_card_show(num) {
+    var cell = document.getElementsByClassName("deler-board"); // 딜러 카드가 표시될 HTML 요소 가져오기
+
+    while (cell.hasChildNodes()) { // 요소가 자식 노드를 가질 때까지 반복
+        cell.removeChild(cell.firstChild); // 기존 카드 요소를 모두 제거
+    }
+
+    if (num == 1) { // 딜러의 첫 번째 카드 뒷면
+        var div = document.createElement("div"); // 새로운 div 요소 생성
+
+        div.id = "deler" + 0; // 첫 번째 카드에 고유한 ID 부여
+        div.style.backgroundImage = "url('/image/PNG-cards/card_back.png')"; // 카드 뒷면 이미지를 설정
+        div.style.backgroundSize = "120px 180px"; // 카드 이미지 크기 설정
+        cell.appendChild(div); // 딜러 보드에 카드 추가
+    }
+
+    for (var i = num; i < deler_card.length; i++) { // com_card 배열의 카드들을 차례대로 출력
+        var div = document.createElement("div"); // 새로운 div 요소 생성
+
+        div.id = "deler" + i; // 각 카드에 고유한 ID 부여
+        // 카드 이미지를 배경으로 설정
+        div.style.backgroundImage = "url('/image/PNG-cards/" + deler_card[i] + ".png')"; // 딜러 카드 이미지를 설정
+        div.style.backgroundSize = "120px 180px"; // 카드 이미지 크기 설정
+        cell.appendChild(div); // 딜러 보드에 카드 추가
     }
 }
