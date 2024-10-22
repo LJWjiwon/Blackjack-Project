@@ -81,10 +81,12 @@ function suple(){ //카드 섞기
 }
 
 
-/* ------- 카드 뽑기 ---------- */
+/* -------------- 카드 뽑기 ------------------ */
 
 var player_card = [];   //플레이어 보유 카드 목록
 var deler_card = [];    //딜러 보유 카드 목록
+var deler_bust = 0;    //버스트 상태 확인
+var player_bust = 0;
 
 var count = 0;  //뽑을 카드 인덱스
 
@@ -128,28 +130,91 @@ function player_card_show() {
 
 // 딜러 카드 보여주기 함수
 function deler_card_show(num) {
-    var cell = document.getElementsByClassName("deler-board"); // 딜러 카드가 표시될 HTML 요소 가져오기
+    var cell = document.getElementsByClassName("deler-board"); 
 
-    while (cell.hasChildNodes()) { // 요소가 자식 노드를 가질 때까지 반복
-        cell.removeChild(cell.firstChild); // 기존 카드 요소를 모두 제거
+    while (cell.hasChildNodes()) { //기존 요소 제거
+        cell.removeChild(cell.firstChild); 
     }
 
     if (num == 1) { // 딜러의 첫 번째 카드 뒷면
         var div = document.createElement("div"); // 새로운 div 요소 생성
 
         div.id = "deler" + 0; // 첫 번째 카드에 고유한 ID 부여
-        div.style.backgroundImage = "url('/image/PNG-cards/card_back.png')"; // 카드 뒷면 이미지를 설정
-        div.style.backgroundSize = "120px 180px"; // 카드 이미지 크기 설정
-        cell.appendChild(div); // 딜러 보드에 카드 추가
+        div.style.backgroundImage = "url('/image/PNG-cards/card_back.png')"; 
+        div.style.backgroundSize = "120px 180px"; 
+        cell.appendChild(div); 
     }
 
-    for (var i = num; i < deler_card.length; i++) { // com_card 배열의 카드들을 차례대로 출력
-        var div = document.createElement("div"); // 새로운 div 요소 생성
+    for (var i = num; i < deler_card.length; i++) { 
+        var div = document.createElement("div"); 
 
-        div.id = "deler" + i; // 각 카드에 고유한 ID 부여
-        // 카드 이미지를 배경으로 설정
-        div.style.backgroundImage = "url('/image/PNG-cards/" + deler_card[i] + ".png')"; // 딜러 카드 이미지를 설정
-        div.style.backgroundSize = "120px 180px"; // 카드 이미지 크기 설정
+        div.id = "deler" + i; 
+        div.style.backgroundImage = "url('/image/PNG-cards/" + deler_card[i] + ".png')"; 
+        div.style.backgroundSize = "120px 180px"; 
         cell.appendChild(div); // 딜러 보드에 카드 추가
     }
 }
+
+//다시시작
+function new_start(){ 
+    suple();
+    console.log(card);
+    setTimeout(turn_start, 1000);
+}
+
+
+/* ---------------------턴 시작 -------------- */
+
+function turn_start() { //카드 각각 2장씩 뽑기
+    player_card = [];  // 플레이어의 카드 배열 초기화
+    deler_card = [];     // 딜러의 카드 배열 초기화 
+    deler_bust = 0;
+    player_bust = 0;
+
+    player_draw();     
+    deler_draw();        
+    player_draw();     
+    deler_draw();        
+    
+    player_card_show(); // 플레이어의 카드를 화면에 표시
+    deler_card_show(1);   // 딜러의 카드를 화면에 표시 (첫 번째 카드는 뒷면으로)
+}
+
+//보유 카드 이미지 보여줌
+function view() {
+    viewer.innerHTML = card.slice(count, card.length); // 현재 카드 배열에서 count 인덱스부터 끝까지의 카드 표시
+}
+
+
+/* -------------- 버스트 ------------------- */
+
+//플레이어 버스트
+function P_bust() {
+    if(player_bust == 0) { 
+        player_bust = 1;    //플레이어 버스트 상태 변환
+        alert("Bust!\n게임에서 졌습니다.");
+
+        player_card_show(); // 플레이어의 카드 상태를 화면에 업데이트
+        deler_card_show(0); // 딜러의 첫 번째 카드 오픈
+
+        setTimeout(end, 100); // 100ms 후 게임 종료 함수 호출
+    }
+}
+
+// 딜러 버스트 함수
+function D_burst() { 
+    deler_card_show(0); // 딜러의 카드 상태를 화면에 업데이트 (첫 번째 카드 보이기)
+    
+    // com_burst가 0이면 (딜러가 아직 버스트 상태가 아닐 경우)
+    if (deler_burst == 0) {
+        deler_burst = 1; // 딜러의 버스트 상태를 1로 설정
+
+        alert("Deler Bust!\n게임에서 이겼습니다.");
+    }
+    
+    deler_card_show(0); // 딜러의 카드 상태를 다시 업데이트
+    setTimeout(end, 300); // 300ms 후 게임 종료 함수 호출
+}
+
+
+
