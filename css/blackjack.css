@@ -51,7 +51,7 @@ html, body {
 }
 
 .chip-board {
-    width: 520px;
+    width: 624px;
     height: 110px;
     background: rgb(130, 63, 32);
     bottom: 0;
@@ -62,7 +62,7 @@ html, body {
 }
 
 .chip-box {
-    width: 20%;
+    width: 104px;
     height: 100%;
     float: left;
     cursor: pointer;
@@ -157,6 +157,6 @@ html, body {
 
 .center-div > h4 {
     margin-block-start: 12px;
-    margin-left: 130px;
+    margin-left: 80px;
 }
 
