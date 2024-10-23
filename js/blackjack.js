@@ -157,7 +157,7 @@ function deler_card_show(num) {
         cell.removeChild(cell.firstChild); 
     }
 
-    if (num == 1) { // 딜러의 첫 번째 카드 뒷면
+    if (num == 1) { // 딜러의 첫 번째 카드 숨김
         var div = document.createElement("div"); // 새로운 div 요소 생성
 
         div.id = "deler" + 0; // 첫 번째 카드에 고유한 ID 부여
@@ -206,29 +206,30 @@ function turn_start() { //카드 각각 2장씩 뽑기
 //플레이어 버스트
 function P_bust() {
     if(player_bust == 0) { 
-        player_bust = 1;    //플레이어 버스트 상태 변환
-        alert("Bust!\n게임에서 졌습니다.");
-
         player_card_show(); // 플레이어의 카드 상태를 화면에 업데이트
-        deler_card_show(0); // 딜러의 첫 번째 카드 오픈
+        setTimeout(function() {
+            deler_card_show(0); // 딜러의 첫 번째 카드 오픈
 
-        setTimeout(end, 100); // 100ms 후 게임 종료 함수 호출
+            player_bust = 1;    //플레이어 버스트 상태 변환
+            setTimeout(function() {
+                alert("Bust!\n게임에서 졌습니다.");
+            }, 1000);
+        }, 1000);
     }
 }
 
 // 딜러 버스트 함수
-function D_burst() { 
+function D_bust() { 
     deler_card_show(0); // 딜러의 카드 상태를 화면에 업데이트 (첫 번째 카드 보이기)
     
-    // com_burst가 0이면 (딜러가 아직 버스트 상태가 아닐 경우)
-    if (deler_burst == 0) {
-        deler_burst = 1; // 딜러의 버스트 상태를 1로 설정
+    // com_bust가 0이면 (딜러가 아직 버스트 상태가 아닐 경우)
+    if (deler_bust == 0) {
+        deler_bust = 1; // 딜러의 버스트 상태를 1로 설정
 
-        alert("Deler Bust!\n게임에서 이겼습니다.");
+        setTimeout(function() {
+            alert("Deler Bust!\n게임에서 이겼습니다.");
+        }, 1000);
     }
-    
-    deler_card_show(0); // 딜러의 카드 상태를 다시 업데이트
-    setTimeout(end, 300); // 300ms 후 게임 종료 함수 호출
 }
 
 
@@ -252,8 +253,8 @@ function sum_player(ace){
             }
         }
 
-        var player_card_sum = document.getElementById('player-card_sum');
-        player_card_sum.value = Player_sum;    //합계 화면에 보여짐
+        const player_sum_txt = document.getElementById("player_card_sum");
+        player_sum_txt.textContent = Player_sum;
 
         if (Player_sum > 21){
             return sum_player(1);   //합 21 넘어서 A 1로 
@@ -273,8 +274,8 @@ function sum_player(ace){
             }
         }
 
-        var player_card_sum = document.getElementById('player-card_sum');
-        player_card_sum.value = Player_sum;
+        const player_sum_txt = document.getElementById("player_card_sum");
+        player_sum_txt.textContent = Player_sum;
 
         if(Player_sum > 21) {
             setTimeout(P_bust, 100);
@@ -320,6 +321,8 @@ function sum_deler(ace){
         }
     }
 
+    console.log(Deler_sum);
+
     return Deler_sum;
 }
 
@@ -327,4 +330,76 @@ function sum_deler(ace){
 /* --------- 이미지 onclick 함수 ------------- */
 function img_click() {
     alert('칩 클릭');
+}
+
+
+/* ------------------ hit, stay ------------------- */
+
+function Hit(){    // hit
+    player_draw();  //카드 한장 뽑기 
+    player_card_show();
+
+    var player_sum = sum_player(0);
+    var deler_sum = sum_deler(0);
+
+    if (player_sum == 21) {
+        if(deler_sum == 21) {
+            deler_card_show(0);
+            setTimeout(function() {
+                alert("draw!무승부!");
+            }, 1000);
+        }
+        else {
+            deler_card_show(0);
+            setTimeout(function() {
+                alert("Your Win!");
+            }, 1000);
+        }
+    }
+    else if (player_sum > 21) {
+        P_bust();
+        
+    }
+    else {
+        setTimeout(function() {     //1초후 딜러 카드 뽑기
+            deler_draw();     
+            deler_card_show(1);   
+            sum_deler(0);
+        }, 1000);
+    }
+}
+
+function Stay(){  //stay
+    var player_sum = sum_player(0);
+    var deler_sum = sum_deler(0);
+
+    player_card_show();
+   
+    if(deler_sum > 21) {    //딜러 버스트 상태 확인
+        setTimeout(D_bust,100);    //딜러 버스트
+    }
+    else if(deler_sum < 17){    //딜러 17 미만일 경우 카드 뽑기
+        deler_draw();
+        deler_card_show(1);
+    }
+    else {
+        if ((player_sum > deler_sum) || deler_sum > 21) {    //플레이어 승
+            deler_card_show(0);
+            setTimeout(function() {
+                alert("Your win");
+            }, 1000);
+        }
+        else if (player_sum < deler_sum){   //플레이어 패
+            deler_card_show(0);
+            setTimeout(function() {
+                alert("deler win");
+            }, 1000);
+        }
+        else{
+            deler_card_show(0);
+            setTimeout(function() {
+                alert("draw!무승부!"); 
+            }, 1000);    //무승부
+        }
+    }
 }
