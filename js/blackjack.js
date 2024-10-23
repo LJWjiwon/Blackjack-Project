@@ -1,7 +1,11 @@
 /*----------- 돈을 칩으로 계산 ----------------*/
 
-function RandomChip() {
-    var RandomDollar = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;     //1000 ~ 10000 랜덤값 추출
+var RandomDollar = 0;
+
+function RandomChip(add_dollar) {   //add_dollar : 게임 끝나고 얻은 금액
+    if (add_dollar == 0) {    //처음 실행할때
+        RandomDollar = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;     //1000 ~ 10000 랜덤값 추출
+    }
 
     document.getElementById("total_dollar").innerHTML = RandomDollar;  //html 기존 텍스트 뒤에 추가(총 금액)
 
@@ -23,21 +27,23 @@ function RandomChip() {
             const img = document.getElementById("chip" + i);
 
             divs[i].textContent = `${nChips[i]}개`;
-
+            
             if (!img.hasAttribute('data-click-active')) {  //칩 onclick 다시 활성화
                 img.addEventListener('click', img_click);   //onclick 이벤트 추가
                 img.setAttribute('data-click-active', 'true');  // 클릭 활성화 상태 표시
-                img.style.opacity = "1";
             }
+
+            img.style.opacity = "1";
             img.style.cursor = "pointer";   //커서 손가락 모양으로
         }
         else {  //0개면 칩 onclick 비활성화
             const img = document.getElementById("chip" + i);
-
+           
             if (img.hasAttribute('data-click-active')) {    //onclick 이벤트 있는 상태라면
                 img.removeEventListener('click', img_click);  // 이벤트 핸들러 제거
                 img.removeAttribute('data-click-active');  // 클릭 활성화 상태 제거
             }
+            
             img.style.opacity = "0.5";
             img.style.cursor = "default";
 
@@ -182,9 +188,9 @@ function deler_card_show(num) {
 
 //다시시작
 function new_start(){ 
-    RandomChip();
+    RandomChip(0);
     suple();
-    setTimeout(turn_start, 1000);
+    turn_start();
 }
 
 
@@ -224,9 +230,10 @@ function P_bust() {
             player_bust = 1;    //플레이어 버스트 상태 변환
             setTimeout(function() {
                 alert("Bust!\n게임에서 졌습니다.");
-            }, 1000);
-        }, 1000);
+            }, 500);
+        }, 500);
     }
+    console.log(RandomDollar);
 }
 
 // 딜러 버스트 함수
@@ -239,7 +246,7 @@ function D_bust() {
 
         setTimeout(function() {
             alert("Deler Bust!\n게임에서 이겼습니다.");
-        }, 1000);
+        }, 500);
     }
 }
 
@@ -252,20 +259,20 @@ function BlackJack_check() {
             deler_card_show(0);
             setTimeout(function() {
                 alert("무승부입니다.");
-            }, 1000);
+            }, 500);
         }
         else {
             deler_card_show(0);
             setTimeout(function() {
                 alert("Black Jack! 축하드립니다.");
-            }, 1000);
+            }, 500);
         }
     }
     else if (deler_sum == 21) {
         deler_card_show(0);
         setTimeout(function() {
             alert("딜러 Black Jack. 게임에서 졌습니다.");
-        }, 1000);
+        }, 500);
     }
 }
 
@@ -384,13 +391,13 @@ function Hit(){    // hit
             deler_card_show(0);
             setTimeout(function() {
                 alert("draw!무승부!");
-            }, 1000);
+            }, 500);
         }
         else {
             deler_card_show(0);
             setTimeout(function() {
                 alert("Your Win!");
-            }, 1000);
+            }, 500);
         }
     }
     else if (player_sum > 21) {
@@ -398,11 +405,11 @@ function Hit(){    // hit
         
     }
     else {
-        setTimeout(function() {     //1초후 딜러 카드 뽑기
+        setTimeout(function() {     //0.5초후 딜러 카드 뽑기
             deler_draw();     
             deler_card_show(1);   
             sum_deler(0);
-        }, 1000);
+        }, 500);
     }
 }
 
@@ -424,19 +431,36 @@ function Stay(){  //stay
             deler_card_show(0);
             setTimeout(function() {
                 alert("Your win");
-            }, 1000);
+            }, 500);
         }
         else if (player_sum < deler_sum){   //플레이어 패
             deler_card_show(0);
             setTimeout(function() {
                 alert("deler win");
-            }, 1000);
+            }, 500);
         }
         else{
             deler_card_show(0);
             setTimeout(function() {
                 alert("draw!무승부!"); 
-            }, 1000);    //무승부
+            }, 500);    //무승부
         }
     }
 }
+
+
+
+/*------------------ 베팅 -------------------*/     
+
+function Play_bet() {   //칩 베팅하기
+
+}
+
+
+
+/*------------------- 금액 ----------------------*/ 
+
+
+
+
+/*------------------게임 끝----------------------*/ 
