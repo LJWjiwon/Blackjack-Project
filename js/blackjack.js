@@ -24,8 +24,9 @@ function RandomChip() {
 
             divs[i].textContent = `${nChips[i]}개`;
 
-            if (img.onclick == null) {  //칩 onclick 다시 활성화
-                img.onclick = img_click();
+            if (!img.hasAttribute('data-click-active')) {  //칩 onclick 다시 활성화
+                img.addEventListener('click', img_click);   //onclick 이벤트 추가
+                img.setAttribute('data-click-active', 'true');  // 클릭 활성화 상태 표시
                 img.style.opacity = "1";
             }
             img.style.cursor = "pointer";   //커서 손가락 모양으로
@@ -33,7 +34,10 @@ function RandomChip() {
         else {  //0개면 칩 onclick 비활성화
             const img = document.getElementById("chip" + i);
 
-            img.onclick = null;
+            if (img.hasAttribute('data-click-active')) {    //onclick 이벤트 있는 상태라면
+                img.removeEventListener('click', img_click);  // 이벤트 핸들러 제거
+                img.removeAttribute('data-click-active');  // 클릭 활성화 상태 제거
+            }
             img.style.opacity = "0.5";
             img.style.cursor = "default";
 
@@ -199,9 +203,16 @@ function turn_start() { //카드 각각 2장씩 뽑기
     
     player_card_show(); // 플레이어의 카드를 화면에 표시
     deler_card_show(1);   // 딜러의 카드를 화면에 표시 (첫 번째 카드는 뒷면으로)
+
+    BlackJack_check();  //블랙잭 체크
+
+    var player_sum = sum_player(0);
+    if (player_sum > 21) {
+        P_bust();
+    }
 }
 
-/* -------------- 버스트 ------------------- */
+/* -------------- 버스트, 블랙잭 ------------------- */
 
 //플레이어 버스트
 function P_bust() {
@@ -228,6 +239,32 @@ function D_bust() {
 
         setTimeout(function() {
             alert("Deler Bust!\n게임에서 이겼습니다.");
+        }, 1000);
+    }
+}
+
+function BlackJack_check() {
+    var player_sum = sum_player(0);
+    var deler_sum = sum_deler(0);
+
+    if (player_sum == 21) { 
+        if (deler_sum == 21) {
+            deler_card_show(0);
+            setTimeout(function() {
+                alert("무승부입니다.");
+            }, 1000);
+        }
+        else {
+            deler_card_show(0);
+            setTimeout(function() {
+                alert("Black Jack! 축하드립니다.");
+            }, 1000);
+        }
+    }
+    else if (deler_sum == 21) {
+        deler_card_show(0);
+        setTimeout(function() {
+            alert("딜러 Black Jack. 게임에서 졌습니다.");
         }, 1000);
     }
 }
