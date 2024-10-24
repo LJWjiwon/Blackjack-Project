@@ -1,5 +1,7 @@
 /*----------- 돈을 칩으로 계산 ----------------*/
-var nChips = new Array()    //칩 개수 저장
+
+var CHIP = [1000, 500, 100, 25, 5, 1];  //칩 금액 
+var nChips = Array(6).fill(0);    //칩 개수 저장
 
 function RandomChip() {     //처음 시작할 때 실행
     var RandomDollar = 0;
@@ -12,8 +14,6 @@ function RandomChip() {     //처음 시작할 때 실행
 
 function convert_Chip(RandomDollar) {  
     document.getElementById("total_dollar").innerHTML = RandomDollar;  //html 기존 텍스트 뒤에 추가(총 금액)
-
-    var CHIP = [1000, 500, 100, 25, 5, 1]
 
     for (let i = 0; i < CHIP.length; i++) {
         let num = Math.floor(RandomDollar / CHIP[i])    //칩 개수 계산
@@ -377,6 +377,8 @@ function img_click(event) {
         selectedChips.push(imageUrl); // 배열에 이미지 URL 추가
         display_ChipImages(); // 이미지 표시 함수 호출
     }
+
+    cal_Bet_convert(imageUrl);  //금액, 개수 업데이트
 }
 
 // 기존 이미지를 초기화, 배열에 있는 이미지를 순차적으로 삽입
@@ -384,7 +386,11 @@ function display_ChipImages() {
     for (let i = 0; i < 6; i++) {  
         const bet_chip_div = document.getElementById(`bet-chip-box${i}`); // div 선택
 
-        bet_chip_div.innerHTML = ''; // 기존 이미지 초기화
+         // 이미지를 추가하기 전에 기존의 이미지가 있으면 제거하고 span은 유지
+        const existingImage = bet_chip_div.querySelector('img');
+        if (existingImage) {
+            bet_chip_div.removeChild(existingImage); // 기존 이미지 제거
+        } 
 
         if (selectedChips[i]) { // 배열에 해당하는 이미지가 있으면
             const imgElement = document.createElement('img'); // 새로운 이미지 요소 생성
@@ -394,6 +400,61 @@ function display_ChipImages() {
         }
     }
 }
+
+
+/*--------------- 베팅할때 금액과 개수 변경 -------------------*/
+
+var bet_amount = 0; //베팅 금액
+var bet_nChips = Array(6).fill(0);  //베팅칩 개수
+
+function cal_Bet_convert(imageUrl) {
+    document.addEventListener('click', function(event) {
+        // 클릭된 요소의 id 가져오기
+        const clickedChipId = event.target.id;
+        var chip_num = clickedChipId[4];    //어떤 칩인지 구분하기 위해
+        var total_Dollar = cal_total_dollar();  //현재 금액
+        const chip_divs = document.querySelectorAll(".chip-count");  //칩 div 가져오기
+        const bet_divs = document.querySelectorAll(".bet_chip-count");  //베팅 칩 div 가져오기
+        const img = document.getElementById("chip" + chip_num);
+
+        //금액 변경
+        total_Dollar -= CHIP[chip_num];
+        document.getElementById("total_dollar").innerHTML = total_Dollar;
+
+        //베팅 금액 변경
+        bet_amount += CHIP[chip_num];
+
+        const betting_amount = document.getElementById('total_betting'); // 요소 선택
+        betting_amount.textContent = `베팅 금액 : $${bet_amount}`; // 새로운 금액으로 텍스트 업데이트
+
+        //칩 개수 변경
+        nChips[chip_num] -= 1;
+        chip_divs[chip_num].textContent = `${nChips[chip_num]}개`;
+
+        //가지고 있는 칩이 0개가 되면 비활성화
+        if (nChips[chip_num] == 0) {    
+            img.removeEventListener('click', img_click);  // 이벤트 핸들러 제거
+            img.removeAttribute('data-click-active');  // 클릭 활성화 상태 제거
+            img.style.opacity = "0.5";
+            img.style.cursor = "default";
+        }
+
+        //베팅칩 개수 변경
+        bet_nChips[chip_num] += 1;
+        //베팅칩 개수 텍스트 업데이트
+        for (let i = 0; i < selectedChips.length; i++) {
+            const bet_chip_div = document.getElementById(`bet-chip-box${i}`); // div 선택
+            const imgElement = bet_chip_div.querySelector('img'); // div에서 이미지 요소 선택
+
+            // 이미지가 존재하고 클릭한 이미지 URL과 같으면
+            if (imgElement && imgElement.src === imageUrl) {
+                bet_divs[i].textContent = `${bet_nChips[chip_num]}개`; // 텍스트 업데이트
+            }
+        }
+    }, { once: true }); // 한 번만 실행되도록 설정
+}
+
+
 
 
 
@@ -503,8 +564,11 @@ function Play_bet() {   //칩 베팅하기
 
     for (let i = 0; i < 6; i++) {  //베팅 칩 이미지 초기화
         const bet_chip_div = document.getElementById(`bet-chip-box${i}`); // div 선택
+        const existingImage = bet_chip_div.querySelector('img');
 
-        bet_chip_div.innerHTML = ''; 
+        if (existingImage) {
+            bet_chip_div.removeChild(existingImage); // 기존 이미지 제거
+        }
     }
 
     setTimeout(function() {
@@ -519,7 +583,25 @@ function betting() {    //베팅 누르면 베팅하기하고 베팅 버튼 없�
 
 /*------------------- 금액 ----------------------*/ 
 
+//총 금액 계산하는 함수
+function cal_total_dollar() {   
+    var total_Dollar = 0;
+
+    for (var i = 0; i < nChips.length; i++) {
+        total_Dollar += nChips[i] * CHIP[i];
+    }
+    
+    return total_Dollar;
+}
 
 
 
 /*------------------게임 끝----------------------*/ 
+function end() {
+    var total_Dollar = 0;
+
+    total_Dollar = cal_total_dollar();
+    if(total_Dollar == 0) {
+        alert("베팅할 수 있는 칩이 없습니다. 게임을 다시 시작해주세요.");
+    }
+}

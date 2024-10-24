@@ -71,7 +71,6 @@ body {
     left: 50%; /* 부모 요소의 50% 위치에서 시작 */
     transform: translateX(-50%); /* 요소의 너비의 절반만큼 왼쪽으로 이동 */
     border-radius: 10px;
-    text-align: center;
     font-weight: 600;
 }
 
@@ -96,6 +95,7 @@ body {
     width: 104px;
     height: 30px;
     bottom: 80px;
+    font-weight: 600;
 }
 
 .cardDeck-img_box {
@@ -155,6 +155,7 @@ body {
     margin-top: 0;
     margin-left: 30px;
     background: rgb(0, 0, 139);
+    border-radius: 10px;
     
 }
 
@@ -239,4 +240,32 @@ body {
     width: 100%;
     height: 100%;
 }
+
+#bet_chip-count0 {
+    position: absolute;
+    width: 104px;
+    height: 30px;
+    top: 130px;
+}
+
+#bet_chip-count1 {
+    position: absolute;
+    width: 104px;
+    height: 30px;
+    top: 240px;
+}
+
+#bet_chip-count2 {
+    position: absolute;
+    width: 104px;
+    height: 30px;
+    top: 350px;
+}
+
+.bet_chip-count {
+    font-weight: 600;
+    color: white;
+}
+
+
 
