@@ -12,16 +12,16 @@
         <div class="left-div">
             <b>베팅 금액 : $5,000</b>
             <div class="beting-board">
-                <div class="bet-chip-box"></div>
-                <div class="bet-chip-box"></div>
-                <div class="bet-chip-box"></div>
-                <div class="bet-chip-box"></div>
-                <div class="bet-chip-box"></div>
-                <div class="bet-chip-box"></div>
+                <div id="bet-chip-box0"></div>
+                <div id="bet-chip-box1"></div>
+                <div id="bet-chip-box2"></div>
+                <div id="bet-chip-box3"></div>
+                <div id="bet-chip-box4"></div>
+                <div id="bet-chip-box5"></div>
             </div>
             <div class="beting-button-div">
-                <button class="beting-play-button" onclick="">베팅하기</button>
-                <button class="beting-button" onclick="">베팅</button>
+                <button class="beting-play-button" onclick="Play_bet()">베팅하기</button>
+                <button class="beting-button" onclick="betting()">베팅</button>
             </div>
         </div>
         <div class="center-div">
@@ -57,7 +57,7 @@
             <b id="total_dollar"></b>
         </div>
         <div class="right-div">
-            <button class="start" onclick="new_start()">시작</button>
+            <button class="start" onclick="RandomChip()">시작</button>
             <p>Black Jack</p>
             <div class="cardDeck-img_box">
                 <img src="/image/poker-deck.png" class="cardDeck-img">

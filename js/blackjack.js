@@ -1,16 +1,19 @@
 /*----------- 돈을 칩으로 계산 ----------------*/
+var nChips = new Array()    //칩 개수 저장
 
-var RandomDollar = 0;
+function RandomChip() {     //처음 시작할 때 실행
+    var RandomDollar = 0;
+    nChips = [];
 
-function RandomChip(add_dollar) {   //add_dollar : 게임 끝나고 얻은 금액
-    if (add_dollar == 0) {    //처음 실행할때
-        RandomDollar = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;     //1000 ~ 10000 랜덤값 추출
-    }
+    RandomDollar = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;     //1000 ~ 10000 랜덤값 추출
 
+    convert_Chip(RandomDollar);
+}
+
+function convert_Chip(RandomDollar) {  
     document.getElementById("total_dollar").innerHTML = RandomDollar;  //html 기존 텍스트 뒤에 추가(총 금액)
 
     var CHIP = [1000, 500, 100, 25, 5, 1]
-    var nChips = new Array()    //칩 개수 저장
 
     for (let i = 0; i < CHIP.length; i++) {
         let num = Math.floor(RandomDollar / CHIP[i])    //칩 개수 계산
@@ -27,22 +30,12 @@ function RandomChip(add_dollar) {   //add_dollar : 게임 끝나고 얻은 금�
             const img = document.getElementById("chip" + i);
 
             divs[i].textContent = `${nChips[i]}개`;
-            
-            if (!img.hasAttribute('data-click-active')) {  //칩 onclick 다시 활성화
-                img.addEventListener('click', img_click);   //onclick 이벤트 추가
-                img.setAttribute('data-click-active', 'true');  // 클릭 활성화 상태 표시
-            }
 
             img.style.opacity = "1";
             img.style.cursor = "pointer";   //커서 손가락 모양으로
         }
-        else {  //0개면 칩 onclick 비활성화
+        else {  //0개면 칩 투명도 낮춤
             const img = document.getElementById("chip" + i);
-           
-            if (img.hasAttribute('data-click-active')) {    //onclick 이벤트 있는 상태라면
-                img.removeEventListener('click', img_click);  // 이벤트 핸들러 제거
-                img.removeAttribute('data-click-active');  // 클릭 활성화 상태 제거
-            }
             
             img.style.opacity = "0.5";
             img.style.cursor = "default";
@@ -188,7 +181,6 @@ function deler_card_show(num) {
 
 //다시시작
 function new_start(){ 
-    RandomChip(0);
     suple();
     turn_start();
 }
@@ -233,7 +225,7 @@ function P_bust() {
             }, 500);
         }, 500);
     }
-    console.log(RandomDollar);
+    console.log(nChips);
 }
 
 // 딜러 버스트 함수
@@ -372,9 +364,37 @@ function sum_deler(ace){
 
 
 /* --------- 이미지 onclick 함수 ------------- */
-function img_click() {
-    alert('칩 클릭');
+
+var selectedChips = []; // 선택된 칩 이미지 URL을 저장할 배열
+
+function img_click(event) {
+    console.log(selectedChips);
+
+    const imageUrl = event.target.src; // 클릭한 이미지의 URL
+            
+    // 클릭한 이미지가 이미 배열에 있는지 확인
+    if (!selectedChips.includes(imageUrl)) {
+        selectedChips.push(imageUrl); // 배열에 이미지 URL 추가
+        display_ChipImages(); // 이미지 표시 함수 호출
+    }
 }
+
+// 기존 이미지를 초기화, 배열에 있는 이미지를 순차적으로 삽입
+function display_ChipImages() {
+    for (let i = 0; i < 6; i++) {  
+        const bet_chip_div = document.getElementById(`bet-chip-box${i}`); // div 선택
+
+        bet_chip_div.innerHTML = ''; // 기존 이미지 초기화
+
+        if (selectedChips[i]) { // 배열에 해당하는 이미지가 있으면
+            const imgElement = document.createElement('img'); // 새로운 이미지 요소 생성
+            imgElement.src = selectedChips[i]; // URL 설정
+            imgElement.alt = 'Selected Image'; // 대체 텍스트 설정
+            bet_chip_div.appendChild(imgElement); // div에 이미지 추가
+        }
+    }
+}
+
 
 
 /* ------------------ hit, stay ------------------- */
@@ -450,12 +470,51 @@ function Stay(){  //stay
 
 
 
+/*------------------- 활성/비활성 --------------------*/
+
+//버튼 존재 여부 검사 후 onclick 이벤트 추가 
+function add_click_event() {    
+
+    for (let i = 0; i < nChips.length; i++) {    //div에 개수
+        const img = document.getElementById("chip" + i);
+
+        if (nChips[i] != 0) {
+            if (!img.hasAttribute('data-click-active')) {  //칩 onclick 활성화
+                img.addEventListener('click', img_click);   //onclick 이벤트 추가
+                img.setAttribute('data-click-active', 'true');  // 클릭 활성화 상태 표시
+            }
+        }
+        else {  //0개면 칩 onclick 비활성화
+            if (img.hasAttribute('data-click-active')) {    //onclick 이벤트 있는 상태라면
+                img.removeEventListener('click', img_click);  // 이벤트 핸들러 제거
+                img.removeAttribute('data-click-active');  // 클릭 활성화 상태 제거
+            }
+        }
+    }
+}
+
+
+
 /*------------------ 베팅 -------------------*/     
 
 function Play_bet() {   //칩 베팅하기
+    add_click_event();  //베팅하기 누르면 버튼 onclick 이벤트 활성
+    selectedChips = []; //전에 베팅한 칩 이미지 초기화 
 
+    for (let i = 0; i < 6; i++) {  //베팅 칩 이미지 초기화
+        const bet_chip_div = document.getElementById(`bet-chip-box${i}`); // div 선택
+
+        bet_chip_div.innerHTML = ''; 
+    }
+
+    setTimeout(function() {
+        alert("칩을 누르면 베팅이 됩니다.\n베팅이 끝났을 경우 베팅 버튼을 눌러서 게임을 시작해주세요.");
+    }, 300);
 }
 
+function betting() {    //베팅 누르면 베팅하기하고 베팅 버튼 없어지게 
+    new_start();
+}
 
 
 /*------------------- 금액 ----------------------*/ 
