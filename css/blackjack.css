@@ -139,20 +139,11 @@ body {
     cursor: pointer;
 }
 
-.left-div > b {
-    margin-top: 100px;
-    margin-left: 30px;
-    margin-bottom: 10px;
-    font-size: 15px;
-    display: block;
-}
-
 .beting-board {
     width: 208px;
     height: 330px;
-    margin-top: 100px;
+    margin-top: 140px;
     display: block;
-    margin-top: 0;
     margin-left: 30px;
     background: rgb(0, 0, 139);
     border-radius: 10px;
@@ -190,18 +181,6 @@ body {
     
 }
 
-.center-div > b {
-    margin-top: 10px;
-    margin-left: 80px;
-    font-size: 17px;
-    display: block;
-    float: left;
-}
-
-#total_dollar {
-    margin-left: 0;
-}
-
 .right-div > p {
     position: absolute;
     font-family: "Times New Roman", serif;
@@ -233,7 +212,7 @@ body {
 
 .player_sum_txt {
     position: absolute;
-    bottom: 250px;
+    bottom: 280px;
 }
 
 .beting-board div img {
@@ -245,21 +224,21 @@ body {
     position: absolute;
     width: 104px;
     height: 30px;
-    top: 130px;
+    top: 140px;
 }
 
 #bet_chip-count1 {
     position: absolute;
     width: 104px;
     height: 30px;
-    top: 240px;
+    top: 250px;
 }
 
 #bet_chip-count2 {
     position: absolute;
     width: 104px;
     height: 30px;
-    top: 350px;
+    top: 360px;
 }
 
 .bet_chip-count {
@@ -267,5 +246,25 @@ body {
     color: white;
 }
 
+.hidden {
+    display: none;
+}
 
+#start {
+    position: absolute;
+    top: 0;
+    left: 635px;
+    width: 270px;
+    height: 60px;
+    font-size: larger;
+    border-radius: 10px;
+    border: none;
+    background-color: yellow;
+    cursor: pointer;
+}
 
+#deler_sum_txt {
+    position: absolute;
+    top: 40px;
+
+}

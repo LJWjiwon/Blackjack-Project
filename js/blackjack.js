@@ -3,17 +3,19 @@
 var CHIP = [1000, 500, 100, 25, 5, 1];  //칩 금액 
 var nChips = Array(6).fill(0);    //칩 개수 저장
 
+//랜덤 달러 함수
 function RandomChip() {     //처음 시작할 때 실행
     var RandomDollar = 0;
     nChips = [];
 
     RandomDollar = Math.floor(Math.random() * (10000 - 1000 + 1)) + 1000;     //1000 ~ 10000 랜덤값 추출
-
+    
     convert_Chip(RandomDollar);
 }
 
+// 달러 칩으로 바꿈
 function convert_Chip(RandomDollar) {  
-    document.getElementById("total_dollar").innerHTML = RandomDollar;  //html 기존 텍스트 뒤에 추가(총 금액)
+    console.log("총 달러 : " + RandomDollar);
 
     for (let i = 0; i < CHIP.length; i++) {
         let num = Math.floor(RandomDollar / CHIP[i])    //칩 개수 계산
@@ -22,6 +24,51 @@ function convert_Chip(RandomDollar) {
         RandomDollar %= CHIP[i]     //거스름돈 계산
     }
 
+    // 각 div를 선택
+    const divs = document.querySelectorAll(".chip-count");
+
+    for (let i = 0; i < divs.length && i < nChips.length; i++) {    //div에 개수
+        if (nChips[i] != 0) {
+            const img = document.getElementById("chip" + i);
+
+            divs[i].textContent = `${nChips[i]}개`;
+
+            img.style.opacity = "1";
+            img.style.cursor = "pointer";   //커서 손가락 모양으로
+        }
+        else {  //0개면 칩 투명도 낮춤
+            const img = document.getElementById("chip" + i);
+            
+            img.style.opacity = "0.5";
+            img.style.cursor = "default";
+
+            divs[i].textContent = ``;
+        }
+    }
+}
+
+//받은 베팅 금액 칩으로 변환
+function convert_bet_Chip(betting_dollar) {   
+    var earn_nChips = Array(6).fill(0);
+
+    for (let i = 0; i < CHIP.length; i++) {
+        let num = Math.floor(betting_dollar / CHIP[i])    //칩 개수 계산
+        earn_nChips[i] = num;
+
+        betting_dollar %= CHIP[i]     //거스름돈 계산
+    }
+
+    console.log(nChips);
+
+    for (let i = 0; i < nChips.length; i++) {   //현재 가지고 있는 칩과 얻은 칩 개수 합침
+        nChips[i] = nChips[i] + earn_nChips[i];
+    }
+
+    console.log(nChips);
+}
+
+//칩의 개수로 칩 보여줌
+function chip_show() {
     // 각 div를 선택
     const divs = document.querySelectorAll(".chip-count");
 
@@ -140,7 +187,6 @@ function player_card_show() {
 
     // player_card 배열의 모든 카드를 차례대로 출력
     for (var i = 0; i < player_card.length; i++) { 
-        console.log(player_card[i]);
         var div = document.createElement("div"); // 새로운 div 요소 생성
 
         div.id = "player" + i; // 각 카드에 고유한 ID 부여
@@ -212,20 +258,31 @@ function turn_start() { //카드 각각 2장씩 뽑기
 
 /* -------------- 버스트, 블랙잭 ------------------- */
 
+let isPlayerBust = false;  // 중복 실행 방지 위해 체크. 
+
 //플레이어 버스트
 function P_bust() {
+    if (isPlayerBust) return;  // 이미 실행된 경우 함수 종료
+    isPlayerBust = true;       // 실행된 상태로 설정
+
     if(player_bust == 0) { 
         player_card_show(); // 플레이어의 카드 상태를 화면에 업데이트
         setTimeout(function() {
             deler_card_show(0); // 딜러의 첫 번째 카드 오픈
 
             player_bust = 1;    //플레이어 버스트 상태 변환
+
+            Sum_Deler = sum_deler(0);   //딜러 카드 합계 띄우기
+            var dealerSum_txt = document.getElementById('deler_sum_txt');
+            dealerSum_txt.textContent = "Deler 카드 합계 : " + Sum_Deler;  // 텍스트를 추가
+
             setTimeout(function() {
                 alert("Bust!\n게임에서 졌습니다.");
+
+                Lose();
             }, 500);
         }, 500);
     }
-    console.log(nChips);
 }
 
 // 딜러 버스트 함수
@@ -236,8 +293,14 @@ function D_bust() {
     if (deler_bust == 0) {
         deler_bust = 1; // 딜러의 버스트 상태를 1로 설정
 
+        Sum_Deler = sum_deler(0);   //딜러 카드 합계 띄우기
+        var dealerSum_txt = document.getElementById('deler_sum_txt');
+        dealerSum_txt.textContent = "Deler 카드 합계 : " + Sum_Deler;  // 텍스트를 추가
+
         setTimeout(function() {
             alert("Deler Bust!\n게임에서 이겼습니다.");
+
+            Win();
         }, 500);
     }
 }
@@ -249,21 +312,42 @@ function BlackJack_check() {
     if (player_sum == 21) { 
         if (deler_sum == 21) {
             deler_card_show(0);
+
+            Sum_Deler = sum_deler(0);   //딜러 카드 합계 띄우기
+            var dealerSum_txt = document.getElementById('deler_sum_txt');
+            dealerSum_txt.textContent = "Deler 카드 합계 : " + Sum_Deler;  // 텍스트를 추가
+
             setTimeout(function() {
                 alert("무승부입니다.");
+
+                Draw();
             }, 500);
         }
         else {
             deler_card_show(0);
+
+            Sum_Deler = sum_deler(0);   //딜러 카드 합계 띄우기
+            var dealerSum_txt = document.getElementById('deler_sum_txt');
+            dealerSum_txt.textContent = "Deler 카드 합계 : " + Sum_Deler;  // 텍스트를 추가
+
             setTimeout(function() {
                 alert("Black Jack! 축하드립니다.");
+
+                Blackjack();
             }, 500);
         }
     }
     else if (deler_sum == 21) {
         deler_card_show(0);
+
+        Sum_Deler = sum_deler(0);   //딜러 카드 합계 띄우기
+        var dealerSum_txt = document.getElementById('deler_sum_txt');
+        dealerSum_txt.textContent = "Deler 카드 합계 : " + Sum_Deler;  // 텍스트를 추가
+
         setTimeout(function() {
             alert("딜러 Black Jack. 게임에서 졌습니다.");
+
+            Lose();
         }, 500);
     }
 }
@@ -314,7 +398,7 @@ function sum_player(ace){
         player_sum_txt.textContent = Player_sum;
 
         if(Player_sum > 21) {
-            setTimeout(P_bust, 100);
+            P_bust();
         }
     }
 
@@ -357,7 +441,6 @@ function sum_deler(ace){
         }
     }
 
-    console.log(Deler_sum);
 
     return Deler_sum;
 }
@@ -368,8 +451,6 @@ function sum_deler(ace){
 var selectedChips = []; // 선택된 칩 이미지 URL을 저장할 배열
 
 function img_click(event) {
-    console.log(selectedChips);
-
     const imageUrl = event.target.src; // 클릭한 이미지의 URL
             
     // 클릭한 이미지가 이미 배열에 있는지 확인
@@ -419,13 +500,9 @@ function cal_Bet_convert(imageUrl) {
 
         //금액 변경
         total_Dollar -= CHIP[chip_num];
-        document.getElementById("total_dollar").innerHTML = total_Dollar;
 
         //베팅 금액 변경
         bet_amount += CHIP[chip_num];
-
-        const betting_amount = document.getElementById('total_betting'); // 요소 선택
-        betting_amount.textContent = `베팅 금액 : $${bet_amount}`; // 새로운 금액으로 텍스트 업데이트
 
         //칩 개수 변경
         nChips[chip_num] -= 1;
@@ -437,6 +514,7 @@ function cal_Bet_convert(imageUrl) {
             img.removeAttribute('data-click-active');  // 클릭 활성화 상태 제거
             img.style.opacity = "0.5";
             img.style.cursor = "default";
+            chip_divs[chip_num].textContent = '';
         }
 
         //베팅칩 개수 변경
@@ -470,14 +548,28 @@ function Hit(){    // hit
     if (player_sum == 21) {
         if(deler_sum == 21) {
             deler_card_show(0);
+
+            Sum_Deler = sum_deler(0);   //딜러 카드 합계 띄우기
+            var dealerSum_txt = document.getElementById('deler_sum_txt');
+            dealerSum_txt.textContent = "Deler 카드 합계 : " + Sum_Deler;  // 텍스트를 추가
+
             setTimeout(function() {
-                alert("draw!무승부!");
+                alert("무승부입니다.");
+
+                Draw();
             }, 500);
         }
         else {
             deler_card_show(0);
+
+            Sum_Deler = sum_deler(0);   //딜러 카드 합계 띄우기
+            var dealerSum_txt = document.getElementById('deler_sum_txt');
+            dealerSum_txt.textContent = "Deler 카드 합계 : " + Sum_Deler;  // 텍스트를 추가
+
             setTimeout(function() {
-                alert("Your Win!");
+                alert("Win!");
+
+                Win();
             }, 500);
         }
     }
@@ -501,7 +593,7 @@ function Stay(){  //stay
     player_card_show();
    
     if(deler_sum > 21) {    //딜러 버스트 상태 확인
-        setTimeout(D_bust,100);    //딜러 버스트
+        D_bust();    //딜러 버스트
     }
     else if(deler_sum < 17){    //딜러 17 미만일 경우 카드 뽑기
         deler_draw();
@@ -510,20 +602,41 @@ function Stay(){  //stay
     else {
         if ((player_sum > deler_sum) || deler_sum > 21) {    //플레이어 승
             deler_card_show(0);
+
+            Sum_Deler = sum_deler(0);   //딜러 카드 합계 띄우기
+            var dealerSum_txt = document.getElementById('deler_sum_txt');
+            dealerSum_txt.textContent = "Deler 카드 합계 : " + Sum_Deler;  // 텍스트를 추가
+
             setTimeout(function() {
-                alert("Your win");
+                alert("Win");
+
+                Win();
             }, 500);
         }
         else if (player_sum < deler_sum){   //플레이어 패
             deler_card_show(0);
+
+            Sum_Deler = sum_deler(0);   //딜러 카드 합계 띄우기
+            var dealerSum_txt = document.getElementById('deler_sum_txt');
+            dealerSum_txt.textContent = "Deler 카드 합계 : " + Sum_Deler;  // 텍스트를 추가
+
             setTimeout(function() {
-                alert("deler win");
+                alert("Lose!");
+
+                Lose();
             }, 500);
         }
         else{
             deler_card_show(0);
+
+            Sum_Deler = sum_deler(0);   //딜러 카드 합계 띄우기
+            var dealerSum_txt = document.getElementById('deler_sum_txt');
+            dealerSum_txt.textContent = "Deler 카드 합계 : " + Sum_Deler;  // 텍스트를 추가
+            
             setTimeout(function() {
-                alert("draw!무승부!"); 
+                alert("무승부입니다."); 
+
+                Draw();
             }, 500);    //무승부
         }
     }
@@ -554,13 +667,21 @@ function add_click_event() {
     }
 }
 
+function start_btn_hidden() {   //시작 클릭후 버튼 숨기기
+    const start_button = document.getElementById('start');
+
+    start_button.classList.add('hidden'); 
+    alert('베팅하기를 클릭하여 베팅해주세요.');
+    RandomChip();   //랜덤 달러 배정
+}
+
 
 
 /*------------------ 베팅 -------------------*/     
 
 function Play_bet() {   //칩 베팅하기
     add_click_event();  //베팅하기 누르면 버튼 onclick 이벤트 활성
-    selectedChips = []; //전에 베팅한 칩 이미지 초기화 
+    selectedChips = []; //베팅한 칩 이미지 배열 초기화 
 
     for (let i = 0; i < 6; i++) {  //베팅 칩 이미지 초기화
         const bet_chip_div = document.getElementById(`bet-chip-box${i}`); // div 선택
@@ -576,7 +697,30 @@ function Play_bet() {   //칩 베팅하기
     }, 300);
 }
 
-function betting() {    //베팅 누르면 베팅하기하고 베팅 버튼 없어지게 
+//베팅 누르면 베팅하기하고 베팅 버튼 비활성화
+function betting() {    
+    if(bet_amount == 0) {
+        alert("칩을 눌러서 베팅을 해주세요!");
+        return;
+    }
+
+    console.log("베팅한 금액 : " + bet_amount);
+
+    var bet_play_btn = document.getElementsByClassName('beting-play-button');    
+    var bet_btn = document.getElementsByClassName('beting-button');
+
+    for (let i = 0; i < bet_play_btn.length; i++) { //getElementsByClassName가 반환하는 HTMLCollection는 여러 요소를 담고 있음. 그래서 반복문 사용
+        bet_play_btn[i].onclick = null;
+        bet_play_btn[i].style.opacity = "0.5";
+        bet_play_btn[i].style.cursor = "default";
+    }
+
+    for (let i = 0; i < bet_btn.length; i++) {
+        bet_btn[i].onclick = null;
+        bet_btn[i].style.opacity = "0.5";
+        bet_btn[i].style.cursor = "default";
+    }
+
     new_start();
 }
 
@@ -594,6 +738,120 @@ function cal_total_dollar() {
     return total_Dollar;
 }
 
+function Win() {    //이겼을 경우
+    console.log("베팅 후 달러 : " + cal_total_dollar());
+
+    bet_amount += bet_amount;   //베팅한 금액의 1배 더 받음
+    console.log("승리 후 받는 금액 : " + bet_amount);
+    
+    convert_bet_Chip(bet_amount);   // 총 칩 개수 계산
+    chip_show();    //칩 보여줌
+    total_Dollar = cal_total_dollar();  //총 달러
+    console.log("승리 후 달러 : " + total_Dollar); 
+
+    for (let i = 0; i < 6; i++) {  //베팅 칩 이미지 초기화
+        const bet_chip_div = document.getElementById(`bet-chip-box${i}`); // div 선택
+        
+        if (bet_chip_div) {
+            const existingImage = bet_chip_div.querySelector('img');
+
+            // existingImage가 유효한지 확인
+            if (existingImage) {
+                bet_chip_div.removeChild(existingImage); // 기존 이미지 제거
+
+                const bet_divs = document.querySelectorAll(".bet_chip-count");  //베팅 칩 div 가져오기
+                bet_divs[i].textContent = ``; // 텍스트 지우기
+            } 
+        }
+    }
+    end();
+}
+
+function Lose() {   //졌을 경우
+    console.log("베팅 후 달러 : " + cal_total_dollar());
+
+    bet_amount = 0;     //베팅 금액 초기화
+
+    total_Dollar = cal_total_dollar();
+    console.log("진 후 달러 : " + total_Dollar);
+
+    for (let i = 0; i < 6; i++) {  //베팅 칩 이미지 초기화
+        const bet_chip_div = document.getElementById(`bet-chip-box${i}`); // div 선택
+
+        if (bet_chip_div) {
+            const existingImage = bet_chip_div.querySelector('img');
+
+            // existingImage가 유효한지 확인
+            if (existingImage) {
+                bet_chip_div.removeChild(existingImage); // 기존 이미지 제거
+                
+                const bet_divs = document.querySelectorAll(".bet_chip-count");  //베팅 칩 div 가져오기
+                bet_divs[i].textContent = ``; // 텍스트 지우기
+            } 
+        }
+    }
+
+    end();
+}
+
+function Blackjack() {  //플레이어 블랙잭
+    console.log("베팅 후 달러 : " + cal_total_dollar());
+
+    bet_amount = bet_amount + (bet_amount * 1.5);   //베팅 금액의 1.5배 더 
+    console.log("블랙잭 후 받는 금액 : " + bet_amount);
+    
+    convert_bet_Chip(bet_amount);   // 총 칩 개수 계산
+    chip_show();    //칩 보여줌
+    total_Dollar = cal_total_dollar();  //총 달러
+    console.log("블랙잭 후 달러 : " + total_Dollar); 
+
+    for (let i = 0; i < 6; i++) {  //베팅 칩 이미지 초기화
+        const bet_chip_div = document.getElementById(`bet-chip-box${i}`); // div 선택
+        
+        if (bet_chip_div) {
+            const existingImage = bet_chip_div.querySelector('img');
+
+            // existingImage가 유효한지 확인
+            if (existingImage) {
+                bet_chip_div.removeChild(existingImage); // 기존 이미지 제거
+                
+                const bet_divs = document.querySelectorAll(".bet_chip-count");  //베팅 칩 div 가져오기
+                bet_divs[i].textContent = ``; // 텍스트 지우기
+            } 
+        }
+    }
+    end();
+
+}
+
+function Draw() {   //무승부
+    console.log("베팅 후 달러 : " + cal_total_dollar());
+
+    console.log("무승부 후 받는 금액 : " + bet_amount);   //베팅한 금액 그대로 받음
+
+    convert_bet_Chip(bet_amount);   // 총 칩 개수 계산
+    chip_show();    //칩 보여줌
+    total_Dollar = cal_total_dollar();  //총 달러
+    console.log("무승부 후 달러 : " + total_Dollar); 
+
+    for (let i = 0; i < 6; i++) {  //베팅 칩 이미지 초기화
+        const bet_chip_div = document.getElementById(`bet-chip-box${i}`); // div 선택
+        
+        if (bet_chip_div) {
+            const existingImage = bet_chip_div.querySelector('img');
+
+            // existingImage가 유효한지 확인
+            if (existingImage) {
+                bet_chip_div.removeChild(existingImage); // 기존 이미지 제거
+                
+                const bet_divs = document.querySelectorAll(".bet_chip-count");  //베팅 칩 div 가져오기
+                bet_divs[i].textContent = ``; // 텍스트 지우기
+            } 
+        }
+    }
+    end();
+}
+
 
 
 /*------------------게임 끝----------------------*/ 
@@ -602,6 +860,6 @@ function end() {
 
     total_Dollar = cal_total_dollar();
     if(total_Dollar == 0) {
-        alert("베팅할 수 있는 칩이 없습니다. 게임을 다시 시작해주세요.");
+        alert("베팅할 수 있는 칩이 없습니다. 게임 종료.");
     }
 }

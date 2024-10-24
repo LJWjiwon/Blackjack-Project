@@ -10,7 +10,6 @@
 <body>
     <div class="container">
         <div class="left-div">
-            <b id="total_betting">베팅 금액 : $</b>
             <div class="beting-board">
                 <div id="bet-chip-box0">
                     <span class="bet_chip-count" id="bet_chip-count0"></span>
@@ -37,6 +36,7 @@
             </div>
         </div>
         <div class="center-div">
+            <button id="start" onclick="start_btn_hidden()">Start</button>
             <div class="deler-board"></div>
             <div class="player-board"></div>
             <div class="chip-board">
@@ -65,11 +65,9 @@
                     <img src="/image/chips/white-chip.png" class="chip_button" id="chip5" onclick="">
                 </div>
             </div>
-            <b>총 금액 : $</b>
-            <b id="total_dollar"></b>
         </div>
         <div class="right-div">
-            <button class="start" onclick="RandomChip()">시작</button>
+            <b id="deler_sum_txt"></b>
             <p>Black Jack</p>
             <div class="cardDeck-img_box">
                 <img src="/image/poker-deck.png" class="cardDeck-img">
