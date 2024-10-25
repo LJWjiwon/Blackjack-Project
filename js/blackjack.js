@@ -96,33 +96,9 @@ function chip_show() {
 
 /* -------------- 카드덱 섞기 -----------------*/ 
 
-var dec = [];   //덱 저장(1개)
-var cardName = ["ace", "jack", "king", "queen"];
-
-for (var i = 2; i < 11; i++) {
-    dec.push(i + "_clubs");
-    dec.push(i + "_diamonds");
-    dec.push(i + "_hearts");
-    dec.push(i + "_spades");
-}
-
-for(var i = 0; i < 4; i++) {
-    dec.push(cardName[i] + "_clubs");
-    dec.push(cardName[i] + "_diamonds");
-    dec.push(cardName[i] + "_hearts");
-    dec.push(cardName[i] + "_spades");
-}
-
-// 4개의 카드 덱을 사용
-var fullDeck = dec.concat(dec, dec, dec);  // 카드덱 합침
-
-var card=[];    //섞인 카드 저장될 배열
-var rst = [];   //랜덤한 수 저장될 배열(인덱스 수)
-
 function getRandom(min, max) {
-return Math.floor((Math.random() * (max - min + 1)) + min);     //min에서 max까지 중 랜덤한 수 추출
+    return Math.floor((Math.random() * (max - min + 1)) + min);     //min에서 max까지 중 랜덤한 수 추출
 }
-
 
 function getRandom_Index(min, max, count) {  //랜덤 인덱스 값 뽑는 함수
     while (1) {     
@@ -142,7 +118,30 @@ function getRandom_Index(min, max, count) {  //랜덤 인덱스 값 뽑는 함�
     return rst;
 }
 
-function suple(){ //카드 섞기
+var rst = [];   //랜덤한 수 저장될 배열(인덱스 수)
+var card=[];    //섞인 카드 저장될 배열
+
+function supple(){ //카드 섞기
+    var dec = [];   //덱 저장(1개)
+    var cardName = ["ace", "jack", "king", "queen"];
+
+    for (var i = 2; i < 11; i++) {
+        dec.push(i + "_clubs");
+        dec.push(i + "_diamonds");
+        dec.push(i + "_hearts");
+        dec.push(i + "_spades");
+    }
+
+    for(var i = 0; i < 4; i++) {
+        dec.push(cardName[i] + "_clubs");
+        dec.push(cardName[i] + "_diamonds");
+        dec.push(cardName[i] + "_hearts");
+        dec.push(cardName[i] + "_spades");
+    }
+
+    // 4개의 카드 덱을 사용
+    var fullDeck = dec.concat(dec, dec, dec);  // 카드덱 합침
+
     getRandom_Index(0, fullDeck.length-1, fullDeck.length);
 
     for (var i = 0; i < fullDeck.length ; i++) {
@@ -227,7 +226,7 @@ function deler_card_show(num) {
 
 //다시시작
 function new_start(){ 
-    suple();
+    supple();
     turn_start();
 }
 
@@ -396,10 +395,6 @@ function sum_player(ace){
 
         const player_sum_txt = document.getElementById("player_card_sum");
         player_sum_txt.textContent = Player_sum;
-
-        if(Player_sum > 21) {
-            P_bust();
-        }
     }
 
     return Player_sum;
@@ -646,9 +641,8 @@ function Stay(){  //stay
 
 /*------------------- 활성/비활성 --------------------*/
 
-//버튼 존재 여부 검사 후 onclick 이벤트 추가 
+//칩 존재 여부 검사 후 onclick 이벤트 추가 
 function add_click_event() {    
-
     for (let i = 0; i < nChips.length; i++) {    //div에 개수
         const img = document.getElementById("chip" + i);
 
